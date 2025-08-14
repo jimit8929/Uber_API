@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 
 //importing routes
 import userRoutes from "./routes/user.route.js";
+import captainRoutes from "./routes/captain.route.js"
 
 const app = express();
 dotenv.config();
@@ -26,5 +27,6 @@ app.get('/', (req, res) => {
 
 //Implementing Routes
 app.use("/api/v1/users" , userRoutes);
+app.use("/api/v1/captain" , captainRoutes);
 
 export default app;
