@@ -1,5 +1,5 @@
 import React from 'react'
-import { CaptainRegisterForm } from '@/features/captain/Captain-Register'
+import { CaptainRegisterForm } from '@/features/captain/Captain-Register-Form'
 
 const CaptainRegister = () => {
   return (

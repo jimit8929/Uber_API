@@ -2,7 +2,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { UserRound, Mail, Lock, Eye, EyeOff, User } from "lucide-react"
 import axios from "axios";
 import { Button } from "@/components/ui/button"
@@ -11,13 +11,13 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import {NavLink, useNavigate} from "react-router-dom"
 import { toast } from "sonner"
-// import { UserDataContext } from "../context/UserContext"
+import { UserDataContext } from "../context/UserContext"
 
 const riderFormSchema = z.object({
-  firstName: z.string().min(2, {
+  firstname: z.string().min(2, {
     message: "First name must be at least 2 characters.",
   }),
-  lastName: z.string().optional(),
+  lastname: z.string().optional(),
   email: z.string().email({
     message: "Please enter a valid email address.",
   }),
@@ -34,40 +34,49 @@ const riderFormSchema = z.object({
 
 
 export function UserRegisterForm() {
+  
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  // const {user , setUser} = useContext(UserDataContext)
+  const {setUser} = useContext(UserDataContext)
+
   const navigate = useNavigate()
+
   const form = useForm({
     resolver: zodResolver(riderFormSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
+      firstname: "",
+      lastname: "",
       email: "",
       password: "",
     },
   })
 
-async  function onSubmit(data) {
+async function onSubmit(data) {
    try {
     setIsLoading(true);
+
     const formattedUser = {
       fullname:{
-        firstname:data.firstName,
-        lastname:data.lastName
+        firstname:data.firstname,
+        lastname:data.lastname
       },
       email:data.email,
       password:data.password
     }
-    const response = await axios.post(`http://localhost:5001/api/v1/users/register` , formattedUser)
+
+
+    const response = await axios.post(`http://localhost:8080/api/v1/users/register` , formattedUser)
+
     console.log(response.data);
+
     const Resdata = response.data;
-    // setUser(Resdata.user)
+    setUser(Resdata.user)
     localStorage.setItem("token" , Resdata.token)
     toast("Successfully User Registered")
     form.reset()
     navigate("/")
-   } catch (error) {
+   } 
+   catch(error){
       console.log(error);
       toast("Something went wrong ")
    }
@@ -91,7 +100,7 @@ async  function onSubmit(data) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="firstName"
+                name="firstname"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>First Name</FormLabel>
@@ -107,7 +116,7 @@ async  function onSubmit(data) {
               />
               <FormField
                 control={form.control}
-                name="lastName"
+                name="lastname"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
